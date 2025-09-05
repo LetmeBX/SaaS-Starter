@@ -4,6 +4,8 @@ import env from "@/env";
  * Detects if the application is running in a serverless environment
  */
 function isServerlessEnvironment(): boolean {
+  return true;
+  
   return Boolean(
     process.env.VERCEL ||
       process.env.AWS_LAMBDA_FUNCTION_NAME ||
