@@ -42,7 +42,7 @@ export function InvoiceList() {
       const json = await res.json();
       setData(json);
     } catch (e) {
-      toast.error("加载失败");
+      toast.error("Failed to load");
     } finally {
       setLoading(false);
     }
@@ -56,33 +56,33 @@ export function InvoiceList() {
   async function reprocess(id: string) {
     const res = await fetch(`/api/invoices/${id}/reprocess`, { method: "POST" });
     if (res.ok) {
-      toast.success("已重新识别");
+      toast.success("Reprocessed");
       fetchData(data.page);
     } else {
-      toast.error("操作失败");
+      toast.error("Operation failed");
     }
   }
 
   async function remove(id: string) {
-    if (!confirm("确认删除该发票？")) return;
+    if (!confirm("Are you sure to delete this invoice?")) return;
     const res = await fetch(`/api/invoices/${id}`, { method: "DELETE" });
     if (res.ok) {
-      toast.success("已删除");
+      toast.success("Deleted");
       fetchData(data.page);
     } else {
-      toast.error("删除失败");
+      toast.error("Delete failed");
     }
   }
 
   async function exportSelected(all = false) {
     const ids = all ? data.rows.map((r) => r.id) : data.rows.filter(() => false).map((r) => r.id); // placeholder for batch select
-    if (ids.length === 0) return toast.info("请选择要导出的发票");
+    if (ids.length === 0) return toast.info("Please select invoices to export");
     const res = await fetch(`/api/invoices/export`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ids, format: "csv" }),
     });
-    if (!res.ok) return toast.error("导出失败");
+    if (!res.ok) return toast.error("Export failed");
     const blob = await res.blob();
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -95,9 +95,9 @@ export function InvoiceList() {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
-        <Input placeholder="搜索代码/号码" value={q} onChange={(e) => setQ(e.target.value)} className="w-48" />
+        <Input placeholder="Search code/number" value={q} onChange={(e) => setQ(e.target.value)} className="w-48" />
         <Select value={status} onValueChange={(v) => setStatus(v)}>
-          <SelectTrigger className="w-40"><SelectValue placeholder="全部状态" /></SelectTrigger>
+          <SelectTrigger className="w-40"><SelectValue placeholder="All statuses" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="UPLOADED">UPLOADED</SelectItem>
             <SelectItem value="PROCESSING">PROCESSING</SelectItem>
@@ -106,20 +106,20 @@ export function InvoiceList() {
             <SelectItem value="FAILED">FAILED</SelectItem>
           </SelectContent>
         </Select>
-        <Button variant="outline" onClick={() => exportSelected(true)}>导出当前列表</Button>
+        <Button variant="outline" onClick={() => exportSelected(true)}>Export current list</Button>
       </div>
 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>缩略图</TableHead>
-              <TableHead>发票代码</TableHead>
-              <TableHead>发票号码</TableHead>
-              <TableHead>开票日期</TableHead>
-              <TableHead>价税合计</TableHead>
-              <TableHead>状态</TableHead>
-              <TableHead className="text-right">操作</TableHead>
+              <TableHead>Preview</TableHead>
+              <TableHead>Invoice Code</TableHead>
+              <TableHead>Invoice Number</TableHead>
+              <TableHead>Issue Date</TableHead>
+              <TableHead>Total (with tax)</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -140,9 +140,9 @@ export function InvoiceList() {
                   <Badge variant={row.status === "FAILED" ? "destructive" : row.status === "COMPLETED" ? "default" : "secondary"}>{row.status}</Badge>
                 </TableCell>
                 <TableCell className="text-right space-x-2">
-                  <Link href={`/dashboard/invoices/${row.id}/review`} className="text-primary text-sm">审阅</Link>
-                  <button className="text-sm text-blue-600" onClick={() => reprocess(row.id)}>重新识别</button>
-                  <button className="text-sm text-red-600" onClick={() => remove(row.id)}>删除</button>
+                  <Link href={`/invoices/${row.id}/review`} className="text-primary text-sm">Review</Link>
+                  <button className="text-sm text-blue-600" onClick={() => reprocess(row.id)}>Reprocess</button>
+                  <button className="text-sm text-red-600" onClick={() => remove(row.id)}>Delete</button>
                 </TableCell>
               </TableRow>
             ))}

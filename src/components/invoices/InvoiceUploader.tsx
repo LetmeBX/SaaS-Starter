@@ -27,11 +27,11 @@ export function InvoiceUploader({ open, onOpenChange, onUploaded }: Props) {
         const data = await res.json().catch(() => ({}));
         throw new Error(data?.error || "Failed to create invoices");
       }
-      toast.success("上传完成，正在识别...");
+      toast.success("Upload completed. Recognizing...");
       onOpenChange(false);
       onUploaded?.();
     } catch (e: any) {
-      toast.error(e?.message || "上传失败");
+      toast.error(e?.message || "Upload failed");
     } finally {
       setPosting(false);
     }
@@ -41,7 +41,7 @@ export function InvoiceUploader({ open, onOpenChange, onUploaded }: Props) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>上传发票</DialogTitle>
+          <DialogTitle>Upload Invoices</DialogTitle>
         </DialogHeader>
         <FileUploader
           acceptedFileTypes={["image/png", "image/jpeg", "image/gif", "application/pdf"]}
@@ -50,7 +50,7 @@ export function InvoiceUploader({ open, onOpenChange, onUploaded }: Props) {
         />
         <div className="flex justify-end gap-2">
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={posting}>
-            关闭
+            Close
           </Button>
         </div>
       </DialogContent>

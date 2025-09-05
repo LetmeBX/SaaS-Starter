@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Loading from "@/app/loading"; // 复用现有的加载组件
 
-export function SessionGuard({ children }: { children: React.ReactNode }) {
+export function SessionGuard({ children, protectAll = false }: { children: React.ReactNode; protectAll?: boolean }) {
   const { data: session, isPending } = useSession();
   const router = useRouter();
   const pathname = usePathname();
@@ -17,8 +17,8 @@ export function SessionGuard({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    // 2. 加载完成但会话不存在，并且当前在受保护的 dashboard 路径下
-    if (!session && pathname.startsWith("/dashboard")) {
+    // 2. 加载完成但会话不存在，保护策略：protectAll 或 dashboard 路径
+    if (!session && (protectAll || pathname.startsWith("/dashboard"))) {
       toast.error("Your session has expired. Please log in again.");
       router.push("/login"); // 重定向到登录页
     }
