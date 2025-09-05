@@ -7,6 +7,7 @@ import {
   uuid,
   index,
   pgEnum,
+  jsonb,
 } from "drizzle-orm/pg-core";
 
 // 定义用户角色枚举
