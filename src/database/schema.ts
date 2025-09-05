@@ -176,3 +176,69 @@ export const uploads = pgTable(
     };
   },
 );
+
+// Invoices table for Chinese VAT invoices
+export const invoices = pgTable(
+  "invoices",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    fileKey: text("fileKey").notNull(),
+    fileUrl: text("fileUrl").notNull(),
+    contentType: text("contentType").notNull(),
+    invoiceType: text("invoiceType").notNull().default("UNKNOWN"),
+    invoiceCode: text("invoiceCode"),
+    invoiceNumber: text("invoiceNumber"),
+    issueDate: timestamp("issueDate"),
+    buyerName: text("buyerName"),
+    buyerTaxId: text("buyerTaxId"),
+    sellerName: text("sellerName"),
+    sellerTaxId: text("sellerTaxId"),
+    totalAmount: integer("totalAmount"),
+    taxAmount: integer("taxAmount"),
+    amountWithTax: integer("amountWithTax"),
+    items: jsonb("items"),
+    recognizedData: jsonb("recognizedData"),
+    status: text("status").notNull().default("UPLOADED"),
+    errorMessage: text("errorMessage"),
+    createdAt: timestamp("createdAt").notNull().defaultNow(),
+    updatedAt: timestamp("updatedAt").notNull().defaultNow(),
+  },
+  (table) => {
+    return {
+      userIdx: index("invoices_userId_idx").on(table.userId),
+      statusIdx: index("invoices_status_idx").on(table.status),
+      issueDateIdx: index("invoices_issueDate_idx").on(table.issueDate),
+      codeNumberIdx: index("invoices_code_number_idx").on(
+        table.invoiceCode,
+        table.invoiceNumber,
+      ),
+    };
+  },
+);
+
+// Templates table for custom extraction templates
+export const templates = pgTable(
+  "templates",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    type: text("type").notNull().default("VAT_INVOICE"),
+    config: jsonb("config"),
+    visualSignature: jsonb("visualSignature"),
+    createdAt: timestamp("createdAt").notNull().defaultNow(),
+    updatedAt: timestamp("updatedAt").notNull().defaultNow(),
+  },
+  (table) => {
+    return {
+      userIdx: index("templates_userId_idx").on(table.userId),
+      nameIdx: index("templates_name_idx").on(table.name),
+    };
+  },
+);
+

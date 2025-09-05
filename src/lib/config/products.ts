@@ -31,6 +31,8 @@ export interface PricingTier {
     yearly: number;
   };
   currency: "USD" | "EUR"; // 支持的货币
+  // 推荐的每月发票识别配额（张）
+  recommendedInvoiceQuota?: number;
 }
 
 /**
@@ -67,6 +69,7 @@ export const PRODUCT_TIERS: PricingTier[] = [
       yearly: 99.99,
     },
     currency: "USD",
+    recommendedInvoiceQuota: 200,
   },
   {
     id: "pro",
@@ -97,6 +100,7 @@ export const PRODUCT_TIERS: PricingTier[] = [
       yearly: 199.99,
     },
     currency: "USD",
+    recommendedInvoiceQuota: 1000,
   },
   {
     id: "team",
@@ -127,6 +131,7 @@ export const PRODUCT_TIERS: PricingTier[] = [
       yearly: 499.99,
     },
     currency: "USD",
+    recommendedInvoiceQuota: 5000,
   },
   // 可以添加更多套餐...
 ];
