@@ -8,6 +8,8 @@ import {
   webhookEvents,
   uploads,
   userRoleEnum,
+  invoices,
+  templates,
 } from "./schema";
 
 export {
@@ -20,4 +22,6 @@ export {
   webhookEvents,
   uploads,
   userRoleEnum,
+  invoices,
+  templates,
 };
