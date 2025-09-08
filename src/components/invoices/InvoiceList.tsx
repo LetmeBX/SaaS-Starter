@@ -140,7 +140,7 @@ export function InvoiceList() {
                   <Badge variant={row.status === "FAILED" ? "destructive" : row.status === "COMPLETED" ? "default" : "secondary"}>{row.status}</Badge>
                 </TableCell>
                 <TableCell className="text-right space-x-2">
-                  <Link href={`/invoices/${row.id}/review`} className="text-primary text-sm">Review</Link>
+                  <Link href={`/app/invoices/${row.id}/review`} className="text-primary text-sm">Review</Link>
                   <button className="text-sm text-blue-600" onClick={() => reprocess(row.id)}>Reprocess</button>
                   <button className="text-sm text-red-600" onClick={() => remove(row.id)}>Delete</button>
                 </TableCell>

@@ -4,36 +4,36 @@ import { getSessionCookie } from "better-auth/cookies";
 export default async function authMiddleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // 定义认证相关页面（用户不应在登录状态下访问）
+  // Auth-only pages (should not be accessible when logged in)
   const isAuthPage =
     pathname.startsWith("/login") ||
     pathname.startsWith("/signup") ||
     pathname.startsWith("/auth/sent");
 
-  // 定义需要认证才能访问的页面
+  // Protected areas
   const isDashboardPage = pathname.startsWith("/dashboard");
+  const isAppPage = pathname.startsWith("/app");
 
-  // 使用 better-auth 推荐的辅助函数检查会话 cookie
+  // Check session via cookie (recommended by better-auth)
   const sessionCookie = getSessionCookie(request);
   const hasSession = !!sessionCookie;
 
-  // 如果用户已登录但尝试访问认证页面，则重定向到仪表盘主页
+  // If logged in and hitting auth pages, go to product workspace
   if (hasSession && isAuthPage) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/app/invoices", request.url));
   }
 
-  // 如果用户未登录但尝试访问仪表盘，则重定向到登录页，并附带回调URL
-  if (!hasSession && isDashboardPage) {
+  // If not logged in and trying to access protected areas, redirect to login with callback
+  if (!hasSession && (isDashboardPage || isAppPage)) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  // 其他情况，允许请求继续
   return NextResponse.next();
 }
 
 export const config = {
-  // 中间件仅在以下匹配的路径上运行，以提高性能
-  matcher: ["/dashboard/:path*", "/login", "/signup", "/auth/sent"],
+  // Run middleware only on these paths for performance
+  matcher: ["/dashboard/:path*", "/app/:path*", "/login", "/signup", "/auth/sent"],
 };

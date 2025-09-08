@@ -8,7 +8,6 @@ import { InvoiceReviewPanel } from "@/components/invoices/InvoiceReviewPanel";
 import { TemplateEditor } from "@/components/invoices/TemplateEditor";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { SessionGuard } from "@/app/dashboard/_components/session-guard";
 
 export default function InvoiceReviewPage() {
   const params = useParams<{ id: string }>();
@@ -50,7 +49,7 @@ export default function InvoiceReviewPage() {
     const res = await fetch(`/api/invoices/${invoice.id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
     if (res.ok) {
       toast.success("Saved");
-      if (status === "COMPLETED") router.push("/invoices");
+      if (status === "COMPLETED") router.push("/app/invoices");
     } else {
       toast.error("Save failed");
     }
@@ -79,39 +78,37 @@ export default function InvoiceReviewPage() {
   }
 
   return (
-    <SessionGuard protectAll>
-      <div className="mx-auto w-full max-w-6xl px-4 py-8">
-        <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-semibold">Invoice Review</h1>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={() => save("PENDING_REVIEW")}>Save</Button>
-            <Button onClick={() => save("COMPLETED")}>Save & Complete</Button>
-            <Button variant="secondary" onClick={reprocess}>Reprocess</Button>
-            <Button variant="outline" onClick={exportCurrent}>Export</Button>
+    <div className="mx-auto w-full max-w-6xl px-4 py-8">
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-semibold">Invoice Review</h1>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => save("PENDING_REVIEW")}>Save</Button>
+          <Button onClick={() => save("COMPLETED")}>Save & Complete</Button>
+          <Button variant="secondary" onClick={reprocess}>Reprocess</Button>
+          <Button variant="outline" onClick={exportCurrent}>Export</Button>
+        </div>
+      </div>
+      {!invoice ? null : (
+        <div className="grid grid-cols-5 gap-4">
+          <div className="col-span-3">
+            <ImageAnnotator imageUrl={invoice.fileUrl} boxes={boxes} activeKey={activeKey} />
+          </div>
+          <div className="col-span-2 space-y-4">
+            <Tabs value={tab} onValueChange={setTab}>
+              <TabsList>
+                <TabsTrigger value="review">Review</TabsTrigger>
+                <TabsTrigger value="template">Template</TabsTrigger>
+              </TabsList>
+              <TabsContent value="review">
+                <InvoiceReviewPanel invoice={invoice} onFocusField={(k) => setActiveKey(k)} onChange={(next) => setInvoice(next)} />
+              </TabsContent>
+              <TabsContent value="template">
+                <TemplateEditor invoiceId={invoice.id} onApplied={() => setTab("review")} />
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
-        {!invoice ? null : (
-          <div className="grid grid-cols-5 gap-4">
-            <div className="col-span-3">
-              <ImageAnnotator imageUrl={invoice.fileUrl} boxes={boxes} activeKey={activeKey} />
-            </div>
-            <div className="col-span-2 space-y-4">
-              <Tabs value={tab} onValueChange={setTab}>
-                <TabsList>
-                  <TabsTrigger value="review">Review</TabsTrigger>
-                  <TabsTrigger value="template">Template</TabsTrigger>
-                </TabsList>
-                <TabsContent value="review">
-                  <InvoiceReviewPanel invoice={invoice} onFocusField={(k) => setActiveKey(k)} onChange={(next) => setInvoice(next)} />
-                </TabsContent>
-                <TabsContent value="template">
-                  <TemplateEditor invoiceId={invoice.id} onApplied={() => setTab("review")} />
-                </TabsContent>
-              </Tabs>
-            </div>
-          </div>
-        )}
-      </div>
-    </SessionGuard>
+      )}
+    </div>
   );
 }
