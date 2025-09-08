@@ -11,7 +11,6 @@ import {
   BarChart3,
   LucideIcon,
   Database,
-  FileText,
 } from "lucide-react";
 import { APP_NAME } from "@/lib/config/constants";
 import { isAdminRole, UserRole } from "@/lib/config/roles";
@@ -53,11 +52,7 @@ const navigation: {
     url: "/dashboard/upload",
     icon: Upload,
   },
-  {
-    title: "Invoices",
-    url: "/dashboard/invoices",
-    icon: FileText,
-  },
+
   {
     title: "Settings",
     url: "/dashboard/settings",

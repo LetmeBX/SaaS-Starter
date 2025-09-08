@@ -52,47 +52,47 @@ export function InvoiceReviewPanel({
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="text-xs text-muted-foreground">发票代码</label>
+          <label className="text-xs text-muted-foreground">Invoice Code</label>
           <Input value={form.invoiceCode || ""} onFocus={() => onFocusField("invoiceCode")} onChange={(e) => setField("invoiceCode", e.target.value)} />
         </div>
         <div>
-          <label className="text-xs text-muted-foreground">发票号码</label>
+          <label className="text-xs text-muted-foreground">Invoice Number</label>
           <Input value={form.invoiceNumber || ""} onFocus={() => onFocusField("invoiceNumber")} onChange={(e) => setField("invoiceNumber", e.target.value)} />
         </div>
         <div>
-          <label className="text-xs text-muted-foreground">开票日期</label>
+          <label className="text-xs text-muted-foreground">Issue Date</label>
           <Input value={form.issueDate ? new Date(form.issueDate).toISOString().slice(0,10) : ""} onFocus={() => onFocusField("issueDate")} onChange={(e) => setField("issueDate", e.target.value)} />
         </div>
         <div>
-          <label className="text-xs text-muted-foreground">购买方名称</label>
+          <label className="text-xs text-muted-foreground">Buyer Name</label>
           <Input value={form.buyerName || ""} onFocus={() => onFocusField("buyerName")} onChange={(e) => setField("buyerName", e.target.value)} />
         </div>
         <div>
-          <label className="text-xs text-muted-foreground">购买方税号</label>
+          <label className="text-xs text-muted-foreground">Buyer Tax ID</label>
           <Input value={form.buyerTaxId || ""} onFocus={() => onFocusField("buyerTaxId")} onChange={(e) => setField("buyerTaxId", e.target.value)} />
         </div>
         <div>
-          <label className="text-xs text-muted-foreground">销售方名称</label>
+          <label className="text-xs text-muted-foreground">Seller Name</label>
           <Input value={form.sellerName || ""} onFocus={() => onFocusField("sellerName")} onChange={(e) => setField("sellerName", e.target.value)} />
         </div>
         <div>
-          <label className="text-xs text-muted-foreground">销售方税号</label>
+          <label className="text-xs text-muted-foreground">Seller Tax ID</label>
           <Input value={form.sellerTaxId || ""} onFocus={() => onFocusField("sellerTaxId")} onChange={(e) => setField("sellerTaxId", e.target.value)} />
         </div>
       </div>
 
       <div>
-        <div className="mb-2 text-sm font-medium">商品明细</div>
+        <div className="mb-2 text-sm font-medium">Items</div>
         <div className="rounded-md border">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>名称</TableHead>
-                <TableHead>数量</TableHead>
-                <TableHead>单价(分)</TableHead>
-                <TableHead>金额(分)</TableHead>
-                <TableHead>税率</TableHead>
-                <TableHead>税额(分)</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Quantity</TableHead>
+                <TableHead>Unit Price (cents)</TableHead>
+                <TableHead>Amount (cents)</TableHead>
+                <TableHead>Tax Rate</TableHead>
+                <TableHead>Tax Amount (cents)</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -125,21 +125,21 @@ export function InvoiceReviewPanel({
 
       <div className="grid grid-cols-3 gap-3">
         <div>
-          <label className="text-xs text-muted-foreground">合计(分)</label>
+          <label className="text-xs text-muted-foreground">Total (cents)</label>
           <Input type="number" value={form.totalAmount ?? ""} onFocus={() => onFocusField("totalAmount")} onChange={(e) => setField("totalAmount", Number(e.target.value))} />
         </div>
         <div>
-          <label className="text-xs text-muted-foreground">税额(分)</label>
+          <label className="text-xs text-muted-foreground">Tax (cents)</label>
           <Input type="number" value={form.taxAmount ?? ""} onFocus={() => onFocusField("taxAmount")} onChange={(e) => setField("taxAmount", Number(e.target.value))} />
         </div>
         <div>
-          <label className="text-xs text-muted-foreground">价税合计(分)</label>
+          <label className="text-xs text-muted-foreground">Total with tax (cents)</label>
           <Input type="number" value={form.amountWithTax ?? ""} onFocus={() => onFocusField("amountWithTax")} onChange={(e) => setField("amountWithTax", Number(e.target.value))} />
         </div>
       </div>
 
       {mismatch && (
-        <div className="text-red-600 text-sm">金额合计与价税合计不一致，请确认。</div>
+        <div className="text-red-600 text-sm">Totals mismatch: sum(items) + sum(tax) != total with tax.</div>
       )}
     </div>
   );
