@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Pagination } from "@/components/ui/pagination";
+import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import Link from "next/link";
 import { toast } from "sonner";
 
@@ -40,7 +40,12 @@ export function InvoiceList() {
       if (status) params.set("status", status);
       const res = await fetch(`/api/invoices?${params.toString()}`);
       const json = await res.json();
-      setData(json);
+      setData((prev) => ({
+        page: Number(json?.page ?? prev.page ?? 1),
+        pageSize: Number(json?.pageSize ?? prev.pageSize ?? 10),
+        total: Number(json?.total ?? 0),
+        rows: Array.isArray(json?.rows) ? json.rows : [],
+      }));
     } catch (e) {
       toast.error("Failed to load");
     } finally {
@@ -123,7 +128,7 @@ export function InvoiceList() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.rows.map((row) => (
+            {(data.rows ?? []).map((row) => (
               <TableRow key={row.id}>
                 <TableCell>
                   {row.fileUrl?.endsWith(".pdf") ? (
@@ -151,11 +156,37 @@ export function InvoiceList() {
       </div>
 
       <div className="flex justify-end">
-        <Pagination
-          page={data.page}
-          pageCount={pageCount}
-          onPageChange={(p) => fetchData(p)}
-        />
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (data.page > 1) fetchData(data.page - 1);
+                }}
+                aria-disabled={data.page <= 1}
+                data-disabled={data.page <= 1}
+              />
+            </PaginationItem>
+
+            <PaginationItem>
+              <span className="px-3 py-2 text-sm" aria-current="page">
+                {data.page} / {Math.max(pageCount, 1)}
+              </span>
+            </PaginationItem>
+
+            <PaginationItem>
+              <PaginationNext
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (data.page < pageCount) fetchData(data.page + 1);
+                }}
+                aria-disabled={data.page >= pageCount}
+                data-disabled={data.page >= pageCount}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </div>
     </div>
   );
